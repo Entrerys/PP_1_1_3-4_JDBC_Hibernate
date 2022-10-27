@@ -5,7 +5,7 @@ import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-import jm.task.core.jdbc.util.UtilHibernate;
+
 import org.hibernate.Session;
 
 import java.util.List;
@@ -38,15 +38,7 @@ public class Main {
 
 
 
-//        Session session = UtilHibernate.getSessionFactory().openSession();
-//
-//        User user = new User("alex","Boobs",(byte)27);
-//
-//        session.save(user);
-//
-//        session.getTransaction().commit();
-//
-//        UtilHibernate.getSessionFactory().close();
+
 
     }
 }

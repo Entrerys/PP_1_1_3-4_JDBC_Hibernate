@@ -3,10 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +16,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (Connection connection = Util.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("create table users" +
-                "(id Int Primary Key NOT NULL, name VARCHAR(30) NOT NULL," +
+        PreparedStatement preparedStatement = connection.prepareStatement("create table IF NOT EXISTS users" +
+                "(id Int auto_increment PRIMARY KEY , name VARCHAR(30) NOT NULL," +
                 " lastName VARCHAR(30) NOT NULL, age Int NOT NULL)")) {
 
             preparedStatement.executeUpdate();
@@ -32,7 +29,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Connection connection = Util.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("drop table users")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("drop table if Exists users")) {
 
             preparedStatement.executeUpdate();
 
@@ -43,12 +40,12 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = Util.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("insert into users(id,name,lastName,age) values(?,?,?,?)")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("insert into users(name,lastName,age) values(?,?,?)")) {
 
-            preparedStatement.setLong(1, (int) (Math.random() * 6000) + 1);
-            preparedStatement.setString(2, name);
-            preparedStatement.setString(3, lastName);
-            preparedStatement.setByte(4, age);
+//            preparedStatement.setLong(1, (int) (Math.random() * 6000) + 1);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -70,9 +67,8 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
         try (Connection connection = Util.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("select * from users")) {
-
-            ResultSet resultSet = preparedStatement.executeQuery();
+             PreparedStatement preparedStatement = connection.prepareStatement("select * from users");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
                 User user = new User();
@@ -82,7 +78,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setAge(resultSet.getByte(4));
                 list.add(user);
             }
-            resultSet.close();
+
 
             return list;
         } catch (SQLException e) {
@@ -93,7 +89,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void cleanUsersTable() {
         try (Connection connection = Util.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("DELETE from users")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("Truncate table users")) {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
